@@ -20,7 +20,7 @@ def add_post(content):
 
 def most_popular_articles(number):
   # verify input
-  num = check_num(number)
+  num = check_num(number, "integer")
   # mark start time
   start = datetime.datetime.now()
   # setup db connect
@@ -32,8 +32,7 @@ def most_popular_articles(number):
   # mark time query completed
   query_complete = datetime.datetime.now()
   # store answer to query
-  #https://stackoverflow.com/questions/10252247/how-do-i-get-a-list-of-column-names-from-a-psycopg2-cursor
-  column_names = [desc[0] for desc in c.description]
+  num = c.rowcount
   contents = "Most popular " + str(num) + " articles (Title / Number of Views) <br />" 
   for row in c:
     article_name = str(row[1])
@@ -56,7 +55,7 @@ def most_popular_articles(number):
 
 def most_popular_author(number):
   # verify input
-  num = check_num(number)
+  num = check_num(number, "integer")
   # mark time start
   start = datetime.datetime.now()
   # setup db connection
@@ -64,14 +63,15 @@ def most_popular_author(number):
   # create a cursor
   c = db.cursor()
   # select statement
-  c.execute("select path, count(status) as numViews, articles.slug, articles.author, authors.id, authors.name from log, articles, authors where concat('/article/', articles.slug) ilike log.path and authors.id = articles.author group by authors.id, articles.author, authors.name, log.path, articles.slug order by numViews desc limit %s;", (num,))
+  c.execute("select count(status) as numViews, articles.author, authors.id, authors.name from log, articles, authors where concat('/article/', articles.slug) ilike log.path and authors.id = articles.author group by authors.name, authors.id, articles.author order by numViews desc limit %s;", (num,))
   # mark time query completed
   query_complete = datetime.datetime.now()
   # store answer to query
+  num = c.rowcount
   contents = "The most popular " + str(num) + " authors (Name / Number of Views): <br />"
   for row in c:
-    author_name = str(row[5])
-    view_count = row[1]
+    author_name = str(row[3])
+    view_count = row[0]
     contents = contents + author_name + " / " + str("{:,}".format(view_count)) + "<br />"
   # mark time complete
   stop = datetime.datetime.now()
@@ -85,7 +85,7 @@ def most_popular_author(number):
 
 def check_failure_rate(min_rate):
   # verify input
-  min_rate = check_num(min_rate)
+  min_rate = check_num(min_rate, "percent")
   # mark time start
   start = datetime.datetime.now()
   # setup db connection
@@ -117,15 +117,21 @@ def check_failure_rate(min_rate):
   # close cursor
   db.close()
 
-def check_num(number):
+def check_num(number, type):
   # performs input validation, if no number assigned, passes in default value (1)
   # a very special thanks to: http://www.pythonforbeginners.com/error-handling/exception-handling-in-python
-  try:
-    num = int(number)
-    if num < 1:
-      num = 1;
-  except ValueError:
-    num = 1
+  if type == "integer":
+    try:
+      num = int(number)
+      if num < 1:
+        num = 1;
+    except ValueError:
+      num = 1
+  if type == "percent":
+    try: 
+      num = float(number)
+    except ValueError:
+      num = 0.00001;
   return num;
 
 

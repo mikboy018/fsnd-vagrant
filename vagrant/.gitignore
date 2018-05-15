@@ -2,3 +2,6 @@ __pycache__
 *.pyc
 .vagrant
 newsdata.sql
+forum/
+catalog/
+tournament/

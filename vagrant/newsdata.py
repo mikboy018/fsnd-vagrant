@@ -14,23 +14,20 @@ HTML_WRAP = '''\
 <html>
   <head>
     <title>Log Analysis Project</title>
-    <style>
-      h1, h3, title, form { text-align: center; }
-      textarea { width: 400px; height: 100px; }
-      div.post { border: 1px solid #999;
-                 padding: 10px 10px;
-                 margin: 10px 20%%; }
-      hr.postbound { width: 50%%; }
-      em.date { color: #999 }
-      button { margin: 10px;}
-    </style>
+    <!-- https://sites.duke.edu/compsci316_01_s2017/help/flask/ -->
+    <link rel="stylesheet" type="text/css" href="static/style.css">
+    <!-- https://stackoverflow.com/questions/29375046/adding-google-fonts-to-flask -->
+    <!-- Google Fonts: https://fonts.google.com/?selection.family=Aldrich -->
+    <link href="{{ https://fonts.googleapis.com/css?family=Aldrich }}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
   </head>
   <body>
-    <div name=title>
+    <div>
       <h1>Log Analysis: News Data</h1>
       <h3>By: Mike Boyer</h3>
-      <a name=Projects href="https://mikboy018.github.io/">Other Projects<a>
-      <a name=LinkedIn href="https://www.linkedin.com/in/michael-boyer-14316a50/">LinkedIn</a>
+      <a id=title name=Projects href="https://mikboy018.github.io/">Other Projects</a>
+      <a id=title name=LinkedIn href="https://www.linkedin.com/in/michael-boyer-14316a50/">LinkedIn</a>
     </div>
     <form method=post>
       <div><textarea id="content" name="content" placeholder="Enter a whole number here, then press a button below."></textarea></div>
@@ -69,7 +66,7 @@ def articles():
 @app.route('/authors/', methods=['POST'])
 
 def authors():
-  print("Searching authors!")
+  print("Searching Authors!")
   message = request.form['content']
   most_popular_author(message)
   print("Authors Retrieved!")
