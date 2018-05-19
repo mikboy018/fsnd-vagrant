@@ -3,7 +3,7 @@ body {
 	font-family: 'Aldrich', sans-serif;
 }
 
-h1, h3, form, #title {
+h1, h3, h5, form, #title {
 	display: block;
 	text-align: center;
 	margin-top: 10px;

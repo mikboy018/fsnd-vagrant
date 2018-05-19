@@ -1,3 +1,5 @@
+#!/usr/bin env python
+
 from flask import Flask, flash, request, redirect, url_for
 
 from newsdatadb import (get_posts, add_post, most_popular_articles,
@@ -30,12 +32,15 @@ HTML_WRAP = '''\
       <a id=title name=LinkedIn href="https://www.linkedin.com/in/boyermikee">
         LinkedIn
       </a>
+      <h5>Enter a number (>0.00001) and hit one of the three buttons below.</h5> 
+      <h5>Example: Entering 2, and pressing the Authors or Articles buttons</h5>
+      <h5>will display the top 2 Authors/Articles. Pressing the Failure Rate</h5>
+      <h5>button will display errors greater than 2 percent.</h5>
+      </div>
     </div>
     <form method=post>
       <div>
-        <textarea id="content" name="content"
-          placeholder="Enter a whole number here, then press a button below.">
-        </textarea>
+        <textarea id="content" name="content" placeholder="Enter number"></textarea>
       </div>
       <div>
         <button formaction="/articles/" id="go" type="submit">
