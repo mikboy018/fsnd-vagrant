@@ -2,7 +2,7 @@
 
 ### Project Details
 
-Udacity Full Stack Web Developer Nanodegree Project 3 - 16 May 18 - Mike Boyer - Boyer.Mike.E@gmail.com
+Udacity Full Stack Web Developer Nanodegree Project 3 - Update 19 May 18 - Mike Boyer - Boyer.Mike.E@gmail.com
 
 Developed for Python 2.7 with Chrome, Firefox, Sublime Text, and [Reindent](https://pypi.org/project/Reindent/0.1.1/#description "Reindent")
 
