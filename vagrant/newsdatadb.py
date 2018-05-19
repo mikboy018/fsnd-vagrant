@@ -57,8 +57,7 @@ def most_popular_articles(number):
         article_name = capwords(article_name)
         view_count = row[1]
         # https://mkaz.blog/code/python-string-format-cookbook/
-        contents = (contents + article_name +
-                    " / " + str("{:,}".format(view_count)) + "<br />")
+        contents += '{} / {:,}<br />'.format(article_name, view_count)
     # mark time complete
     stop = datetime.datetime.now()
     # append to posts, with runtime info
@@ -106,8 +105,7 @@ def most_popular_author(number):
     for row in c:
         author_name = str(row[0])
         view_count = row[1]
-        contents = (contents + author_name + " / " +
-                    str("{:,}".format(view_count)) + "<br />")
+        contents += '{} / {:,}<br />'.format(author_name, view_count)
     # mark time complete
     stop = datetime.datetime.now()
     # append to posts, with runtime info
@@ -188,6 +186,10 @@ def check_num(number, type):
     if type == "percent":
         try:
             num = float(number)
+            if num < 0.00001:
+                num = 0.00001
+            if num >= 100:
+                num = 0.00001
         except ValueError:
             num = 0.00001
     return num
