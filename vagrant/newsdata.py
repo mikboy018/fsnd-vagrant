@@ -1,5 +1,17 @@
 #!/usr/bin env python
 
+"""
+
+HTML template for the forum page from the Database Forum Examples
+used in Udacity's Full-Stack Web Developer Nanodegree
+
+The following resources were very helpful:
+https://sites.duke.edu/compsci316_01_s2017/help/flask/
+https://stackoverflow.com/questions/29375046/adding-google-fonts-to-flask
+Google Fonts: https://fonts.google.com/?selection.family=Aldrich
+
+"""
+
 from flask import Flask, flash, request, redirect, url_for
 
 from newsdatadb import (get_posts, add_post, most_popular_articles,
@@ -7,10 +19,6 @@ from newsdatadb import (get_posts, add_post, most_popular_articles,
 
 app = Flask(__name__)
 
-# HTML template for the forum page
-# https://sites.duke.edu/compsci316_01_s2017/help/flask/ -->
-# https://stackoverflow.com/questions/29375046/adding-google-fonts-to-flask -->
-# Google Fonts: https://fonts.google.com/?selection.family=Aldrich -->
 HTML_WRAP = '''\
 <!DOCTYPE html>
 <html>
@@ -32,15 +40,15 @@ HTML_WRAP = '''\
       <a id=title name=LinkedIn href="https://www.linkedin.com/in/boyermikee">
         LinkedIn
       </a>
-      <h5>Enter a number (>0.00001) and hit one of the three buttons below.</h5> 
-      <h5>Example: Entering 2, and pressing the Authors or Articles buttons</h5>
-      <h5>will display the top 2 Authors/Articles. Pressing the Failure Rate</h5>
+      <h5>Enter a number (>0.00001) and hit one of the three buttons.</h5>
+      <h5>Example: Entering 2, and pressing Authors or Articles buttons</h5>
+      <h5>will display the top 2 Authors/Articles. Pressing Failure Rate</h5>
       <h5>button will display errors greater than 2 percent.</h5>
       </div>
     </div>
     <form method=post>
       <div>
-        <textarea id="content" name="content" placeholder="Enter number"></textarea>
+        <textarea id="content" name="content" placeholder="1"></textarea>
       </div>
       <div>
         <button formaction="/articles/" id="go" type="submit">

@@ -43,7 +43,7 @@ def most_popular_articles(number):
         GROUP BY title
         ORDER BY numViews DESC
         LIMIT %s;
-    """, [num,])
+    """, [num, ])
     # mark time query completed
     query_complete = datetime.datetime.now()
     # store answer to query
@@ -95,8 +95,8 @@ def most_popular_author(number):
               AND authors.id = articles.author
               GROUP BY authors.name
               ORDER BY numViews DESC
-              LIMIT %s; 
-    """, [num,])
+              LIMIT %s;
+    """, [num, ])
     # mark time query completed
     query_complete = datetime.datetime.now()
     # store answer to query
@@ -136,10 +136,11 @@ def check_failure_rate(min_rate):
     c.execute("""
               SELECT to_char(time, 'MM/DD/YYYY') AS day,
               (SELECT cast(count(status) filter
-              (WHERE status != '200 OK') AS float) / cast(count(status) AS float)*100)
+              (WHERE status != '200 OK') AS float) / cast(count(status)
+              AS float)*100)
               AS failRate
-              FROM log 
-              GROUP BY day 
+              FROM log
+              GROUP BY day
               ORDER BY failRate DESC;
     """)
     # mark time query completed
