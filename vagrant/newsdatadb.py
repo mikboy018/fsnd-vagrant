@@ -1,4 +1,8 @@
-# "Database code" for the DB Forum modified to suit the needs of the project.
+"""
+
+ "Database code" for the DB Forum modified to suit the needs of the project.
+
+"""
 
 import datetime
 import psycopg2
@@ -22,6 +26,7 @@ def add_post(content):
 
 
 def most_popular_articles(number):
+    """ Queries for most popular articles, limiting by number specified """
     # verify input
     num = check_num(number, "integer")
     # mark start time
@@ -31,14 +36,14 @@ def most_popular_articles(number):
     # create a cursor
     c = db.cursor()
     # select statement
-    c.execute(
-        "select path, title, count(status) as numViews, " +
-        "articles.slug from " +
-        "log, articles where concat('/article/', articles.slug) " +
-        " ilike log.path " +
-        "group by path, slug, title " +
-        "order by numViews desc limit %s;" % (str(num),)
-    )
+    c.execute("""
+        SELECT title, count(status) AS numViews
+        FROM log, articles
+        WHERE concat('/article/', articles.slug) = log.path
+        GROUP BY title
+        ORDER BY numViews DESC
+        LIMIT %s;
+    """, [num,])
     # mark time query completed
     query_complete = datetime.datetime.now()
     # store answer to query
@@ -47,10 +52,10 @@ def most_popular_articles(number):
                 str(num) +
                 " articles (Title / Number of Views) <br />")
     for row in c:
-        article_name = str(row[1])
+        article_name = str(row[0])
         # https://docs.python.org/2/library/string.html#string.capwords
         article_name = capwords(article_name)
-        view_count = row[2]
+        view_count = row[1]
         # https://mkaz.blog/code/python-string-format-cookbook/
         contents = (contents + article_name +
                     " / " + str("{:,}".format(view_count)) + "<br />")
@@ -73,6 +78,7 @@ def most_popular_articles(number):
 
 
 def most_popular_author(number):
+    """ Queries for most popular authors, limiting by number specified """
     # verify input
     num = check_num(number, "integer")
     # mark time start
@@ -82,15 +88,15 @@ def most_popular_author(number):
     # create a cursor
     c = db.cursor()
     # select statement
-    c.execute("select count(status) as numViews, " +
-              "articles.author, authors.id, authors.name " +
-              "from log, articles, authors " +
-              "where concat('/article/', articles.slug) " +
-              "ilike log.path and " +
-              "authors.id = articles.author " +
-              "group by authors.name, authors.id, " +
-              "articles.author order by numViews desc " +
-              "limit %s;", (num,))
+    c.execute("""
+              SELECT authors.name, count(status) AS numViews
+              FROM log, articles, authors
+              WHERE concat('/article/', articles.slug) = log.path
+              AND authors.id = articles.author
+              GROUP BY authors.name
+              ORDER BY numViews DESC
+              LIMIT %s; 
+    """, [num,])
     # mark time query completed
     query_complete = datetime.datetime.now()
     # store answer to query
@@ -98,8 +104,8 @@ def most_popular_author(number):
     contents = ("The most popular " + str(num) +
                 " authors (Name / Number of Views): <br />")
     for row in c:
-        author_name = str(row[3])
-        view_count = row[0]
+        author_name = str(row[0])
+        view_count = row[1]
         contents = (contents + author_name + " / " +
                     str("{:,}".format(view_count)) + "<br />")
     # mark time complete
@@ -117,6 +123,7 @@ def most_popular_author(number):
 
 
 def check_failure_rate(min_rate):
+    """ Queries for a minimum specified failure rate """
     # verify input
     min_rate = check_num(min_rate, "percent")
     # mark time start
@@ -126,11 +133,15 @@ def check_failure_rate(min_rate):
     # create a cursor
     c = db.cursor()
     # select statement
-    c.execute("select to_char(time, 'MM/DD/YYYY') " +
-              "as day, (select cast(count(status) filter " +
-              "(where status != '200 OK') " +
-              "as float) / cast(count(status) as float)*100) as " +
-              "failRate from log group by day order by failRate desc;")
+    c.execute("""
+              SELECT to_char(time, 'MM/DD/YYYY') AS day,
+              (SELECT cast(count(status) filter
+              (WHERE status != '200 OK') AS float) / cast(count(status) AS float)*100)
+              AS failRate
+              FROM log 
+              GROUP BY day 
+              ORDER BY failRate DESC;
+    """)
     # mark time query completed
     query_complete = datetime.datetime.now()
     # store answer to query
@@ -160,9 +171,12 @@ def check_failure_rate(min_rate):
 
 
 def check_num(number, type):
-    # performs input validation, if no number assigned,
-    # passes in default value (1)
-    # a very special thanks to: http://www.pythonforbeginners.com/error-handling/exception-handling-in-python # NOQA
+    """
+    Performs input validation, if no number assigned,
+    Passes in default value (1)
+    A very special thanks to: http://www.pythonforbeginners.com/error-handling/exception-handling-in-python # NOQA
+
+    """
     if type == "integer":
         try:
             num = int(number)
