@@ -1,4 +1,4 @@
-from flask import Flask, render_template # import flask libraries
+from flask import Flask, render_template, request, redirect, url_for, flash # import flask libraries
 app = Flask(__name__) # create instance of this app
 
 from sqlalchemy import create_engine
@@ -25,20 +25,46 @@ def RestaurantInfo(restaurant_id):
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id)
     return render_template('menu.html', restaurant = restaurant, items = items)
 
-@app.route('/restaurants/<int:restaurant_id>/newitems')
+@app.route('/restaurants/<int:restaurant_id>/newitems', methods=['GET', 'POST'])
 def NewMenuItem(restaurant_id):
-    return 'Placeholder: create new menu item'
+    if request.method == 'POST':
+        newItem = MenuItem(name = request.form['name'], restaurant_id = restaurant_id)
+        session.add(newItem)
+        session.commit()
+        flash("New Item Created: " + newItem.name)
+        return redirect(url_for('RestaurantInfo', restaurant_id = restaurant_id))
+    else:
+        return render_template('newmenuitem.html', restaurant_id = restaurant_id)
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edititem')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edititem', methods=['GET', 'POST'])
 def EditMenuItem(restaurant_id, menu_id):
-    return 'Placeholder: edit menu items'
+    item = session.query(MenuItem).filter_by(id = menu_id).one()
+    oldname = item.name
+    if request.method == 'POST':
+        if request.form['name']:
+            item.name = request.form['name']
+        session.add(item)
+        session.commit()
+        flash("Item " + oldname + " updated to " + item.name)
+        return redirect(url_for('RestaurantInfo', restaurant_id = restaurant_id))
+    else:
+        return render_template('editmenuitem.html', restaurant_id = restaurant_id, menu_id = menu_id, item = item)
 
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/deleteitem')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/deleteitem', methods=['GET', 'POST'])
 def DeleteMenuItem(restaurant_id, menu_id):
-    return 'Placeholder: delete menu items'
+    item = session.query(MenuItem).filter_by(id = menu_id).one()
+    if request.method == 'POST':
+        if request.form['button']:
+            session.delete(item)
+            session.commit()
+            flash("Removed " + item.name)
+            return redirect(url_for('RestaurantInfo', restaurant_id = restaurant_id))
+    else:
+        return render_template('deletemenuitem.html', restaurant_id = restaurant_id, menu_id = menu_id, item = item)
 
 
 if __name__ == '__main__':  #  other files will be 'name'
+    app.secret_key = '12345' # should be a secret password, entering luggage combo instead, for flash messages
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000) # tells vagrant to listen on all public IP add
