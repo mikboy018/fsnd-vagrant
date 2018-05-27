@@ -1,4 +1,4 @@
-from flask import Flask # import flask libraries
+from flask import Flask, render_template # import flask libraries
 app = Flask(__name__) # create instance of this app
 
 from sqlalchemy import create_engine
@@ -14,29 +14,16 @@ session = DBSession()
 @app.route('/') # decorators to determine code based on route
 @app.route('/restaurants')
 def ListRestaurants():
-    restaurants = session.query(Restaurant).all()
-    output = ''
-    for r in restaurants:
-        output += r.name
-        output += '<br /><br /'
+    restaurant = session.query(Restaurant).all()
+    for r in restaurant:
         items = session.query(MenuItem).filter_by(restaurant_id = r.id)
-        for i in items:
-            output += '  - ' + i.name + ': ' + i.price
-            output += '<br />'
-        output += '<br/>'
-    return output
+    return render_template('menu.html', restaurant = r, items = items) # only returns last entry
 
 @app.route('/restaurants/<int:restaurant_id>/')
 def RestaurantInfo(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-    items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
-    output = ''
-    output += restaurant.name
-    for i in items:
-        output += ' - ' + i.name + ': ' + i.price + '<br />'
-        output += i.description
-        output += '<br />'
-    return output
+    items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id)
+    return render_template('menu.html', restaurant = restaurant, items = items)
 
 @app.route('/restaurants/<int:restaurant_id>/newitems')
 def NewMenuItem(restaurant_id):
