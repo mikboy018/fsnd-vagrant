@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash # import flask libraries
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify # import flask libraries
 app = Flask(__name__) # create instance of this app
 
 from sqlalchemy import create_engine
@@ -10,6 +10,20 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+# Make an API Endpoint (GET Request) - all items by restaurant id
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def RestaurantInfoJSON(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+    items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id)
+    return jsonify(MenuItems=[i.serialize for i in items])
+
+# Make an API Endpoint (GET Request) - list item by restaurant & menu ids
+@app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def MenuItemInfoJSON(restaurant_id, menu_id):
+    restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+    items = session.query(MenuItem).filter_by(id = menu_id).one()
+    return jsonify(MenuItems=[items.serialize])
 
 @app.route('/') # decorators to determine code based on route
 @app.route('/restaurants')
