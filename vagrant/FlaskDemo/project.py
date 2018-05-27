@@ -36,7 +36,7 @@ def EditMenuItem(restaurant_id, menu_id):
 
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/deleteitem')
 def DeleteMenuItem(restaurant_id, menu_id):
-    return 'Placeholder: delte menu items'
+    return 'Placeholder: delete menu items'
 
 
 if __name__ == '__main__':  #  other files will be 'name'

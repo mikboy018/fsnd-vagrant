@@ -16,7 +16,20 @@
 
 	<br />
 
+	<a href='{{url_for("EditMenuItem", restaurant_id = restaurant.id, menu_id = i.id)}}'>Edit</a>
+
+	<a href='{{url_for("DeleteMenuItem", restaurant_id = restaurant.id, menu_id = i.id)}}'>Delete</a>
+
+	<br /><br />
+	
 	{% endfor %}
+
+	<br /><br /><br />
+
+	<a href='{{url_for("NewMenuItem", restaurant_id = restaurant.id) }}'>New Item</a>
+
+	<br />
+
 
 </body>
 </html>
