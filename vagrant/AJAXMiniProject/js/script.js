@@ -24,8 +24,25 @@ function loadData() {
 
     // Update background image with streetview image based on address
     $body.append('<img class="bgimg" src="' + gMapsUrl + address +'">');
-    
+
+    // NY Times AJAX Request
+
+    var NYTimesUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    NYTimesUrl += '?q=' + cityStr +  '&sort=newest&api-key=xxxxxxxxxxxxxxxxxxxx';
+
+    $.getJSON(NYTimesUrl, function(data){
+        $nytHeaderElem.text('NY Time Articles: ' + cityStr);
+
+        articles = data.response.docs;
+        for(var i = 0; i < articles.length; i++){
+            var article = articles[i];
+            $nytElem.append('<li class="article"><a href="' + article.web_url + '">' + article.headline.main + '</a><p>' + article.snippet + '</p></li>');
+        }
+
+    }).fail($nytHeaderElem.text('NY Times articles were not able to load'));
+
     return false;
-};
+}
+
 
 $('#form-container').submit(loadData);
