@@ -28,7 +28,7 @@ function loadData() {
     // NY Times AJAX Request
 
     var NYTimesUrl = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-    NYTimesUrl += '?q=' + cityStr +  '&sort=newest&api-key=xxxxxxxxxxxxxxxxxxxx';
+    NYTimesUrl += '?q=' + cityStr +  '&sort=newest&api-key=X';
 
     $.getJSON(NYTimesUrl, function(data){
         $nytHeaderElem.text('NY Time Articles: ' + cityStr);
@@ -40,6 +40,25 @@ function loadData() {
         }
 
     }).fail($nytHeaderElem.text('NY Times articles were not able to load'));
+
+
+    // Wikipedia AJAX Request
+
+    var wURL = "http://en.wikipedia.org/w/api.php";
+    wURL += '?action=opensearch&search=' + cityStr + '&format=json&callback=wikiCallback';
+
+    $.ajax({
+        url: wURL,
+        dataType: "jsonp",
+        success: function (response) {
+            var articleList = response[1];
+            for (var i = 0; i < articleList.length; i++){
+                articleStr = articleList[i];
+                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+                $wikiElem.append('<li><a href="'+ url + '">' + articleStr + '</a></li>');
+            };
+        }
+    });
 
     return false;
 }
