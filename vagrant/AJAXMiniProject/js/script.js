@@ -47,6 +47,10 @@ function loadData() {
     var wURL = "http://en.wikipedia.org/w/api.php";
     wURL += '?action=opensearch&search=' + cityStr + '&format=json&callback=wikiCallback';
 
+    var wRequestTimeout = setTimeout(function(){
+        $wikiElem.text('Timeout - error retrieving from wikipedia');
+    }, 8000);
+
     $.ajax({
         url: wURL,
         dataType: "jsonp",
