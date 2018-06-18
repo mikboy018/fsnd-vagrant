@@ -3,5 +3,4 @@ __pycache__
 .vagrant
 newsdata.sql
 forum/
-catalog/
 tournament/
