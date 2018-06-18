@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-
+""" Setup Users table, no serialization option, to protect users."""
 class Users(Base):
     __tablename__ = 'user'
 
@@ -14,6 +14,7 @@ class Users(Base):
     email = Column(String(250), nullable = False)
     admin = Column(Boolean(False), nullable = False)
 
+""" Setup Categories table """
 class Categories(Base):
     __tablename__ = 'categories'
 
@@ -22,13 +23,15 @@ class Categories(Base):
     owner_id = Column(Integer, ForeignKey('user.id'))
     owner = relationship(Users)
 
+    """ Serialize table """
     @property
     def serialize(self):
         return {
             'id': self.id,
             'name': self.name,
         }
-    
+
+""" Setup Items table """
 class Items(Base):
     __tablename__ = 'items'
 
@@ -40,6 +43,7 @@ class Items(Base):
     category = relationship(Categories)
     owners = relationship(Users)
 
+    """ Serialize table """
     @property
     def serialize(self):
         return {
@@ -47,7 +51,7 @@ class Items(Base):
             'name': self.name,
             'description': self.description
         }
-engine = create_engine('sqlite:///restaurantmenuwithusers.db')
 
+engine = create_engine('sqlite:///restaurantmenuwithusers.db')
 
 Base.metadata.create_all(engine)
