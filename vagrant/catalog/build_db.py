@@ -7,7 +7,7 @@ Base = declarative_base()
 
 """ Setup Users table, no serialization option, to protect users."""
 class Users(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True)
     name = Column(String(250), nullable = False)
@@ -20,7 +20,7 @@ class Categories(Base):
 
     id = Column(Integer, primary_key = True)
     name = Column(String(250), nullable = False)
-    owner_id = Column(Integer, ForeignKey('user.id'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
     owner = relationship(Users)
 
     """ Serialize table """
@@ -38,8 +38,8 @@ class Items(Base):
     id = Column(Integer, primary_key = True)
     name = Column(String(250), nullable = False)
     description = Column(String(250), nullable = False)
-    category_id = Column(Integer, ForeignKey('Categories.id'))
-    owner_id = Column(Integer, ForeignKey('Users.id'))
+    category_id = Column(Integer, ForeignKey('categories.id'))
+    owner_id = Column(Integer, ForeignKey('users.id'))
     category = relationship(Categories)
     owners = relationship(Users)
 
@@ -52,6 +52,6 @@ class Items(Base):
             'description': self.description
         }
 
-engine = create_engine('sqlite:///catelog.db')
+engine = create_engine('sqlite:///catalog.db')
 
 Base.metadata.create_all(engine)
