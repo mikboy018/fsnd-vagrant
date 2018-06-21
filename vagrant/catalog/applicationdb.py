@@ -17,27 +17,27 @@ engine = create_engine('sqlite:///catalog.db')
 DBSession  = sessionmaker(bind = engine)
 session = DBSession()
 
-def show_categories()
+def show_categories():
 
 	print("Show all categories --- Main Page")
 
-def add_categories(int admin_id)
+def add_categories(admin_id):
 
 	print("Add a category, if admin user")
 
-def remove_categories()
+def remove_categories(admin_id):
 
 	print("Remove selected category, if admin user")
 
-def show_items(int category_id):
+def show_items(category_id):
 
 	print("Show items")
 
-def add_items(int category_id):
+def add_items(category_id):
 
 	print("Add items")
 
-def remove_items(int category_id, int item_id)
+def remove_items(category_id, item_id):
 
 	print("Remove selected item")
 
