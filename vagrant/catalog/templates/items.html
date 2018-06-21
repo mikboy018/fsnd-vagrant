@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{categories.name}}</title>
+</head>
+<body>
+
+	<h1>{{categories.name}}</h1>
+
+	<br />
+
+	<div class="list">
+	
+		{% for i in items %}
+			
+			<h3>{{i.name}}</h3>
+	
+			{{i.description}}
+	
+			<br /><br />
+
+		{% endfor %}
+
+	</div>
+
+</body>
+</html>

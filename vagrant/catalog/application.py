@@ -29,16 +29,17 @@ session = DBSession()
 @app.route('/')
 @app.route('/categories/')
 def main():
+	cat = session.query(Categories).all()
 	print("Welcome to the main page!")
-	return "Main"
+	return render_template('main.html', Categories = cat)
 
 """ Items Page / Displays items once the user clicks on a category """
 @app.route('/categories/<int:categories_id>/', methods = ['GET','POST'])
 def show_items(categories_id):
 	print("Under construction... this will show items by category")
-	cat = session.query(Categories).filter_by(id=categories_id).all()
-	categories_id = show_categories()
-	return render_template('main.html', categories_id = categories_id)
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	item = session.query(Items).filter_by(category_id = categories_id).all()
+	return render_template('items.html', categories = cat, items = item)
 
 """ New Items Page / allows user to add new item, or go back to categories/id page """
 @app.route('/categories/<int:categories_id>/new/', methods = ['GET', 'POST'])
