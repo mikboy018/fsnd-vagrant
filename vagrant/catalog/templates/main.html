@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
 	<title>Categories</title>
 </head>
 <body>
@@ -10,25 +11,15 @@
 
 	<div class="list">
 	
-		{% for c in Categories %}
-			
+		{% for c in categories %}
+			<a href='{{url_for("show_items", categories = categories, items = null, categories_id = c.id)}}'>
 			<h3>{{c.name}}</h3>
+			</a>
 	
 			<br /><br />
 	
 			
 		{% endfor %}
-
-	</div>
-
-
-	<br /><br /><br />
-
-	<div class="foot">
-
-	<h1> Footer </h1>	
-
-	<br />
 
 	</div>
 

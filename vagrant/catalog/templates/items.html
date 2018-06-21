@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
 	<title>{{categories.name}}</title>
 </head>
 <body>
@@ -20,6 +21,18 @@
 			<br /><br />
 
 		{% endfor %}
+
+	</div>
+
+	<div class="foot">
+
+	<h1> Footer </h1>	
+
+	<br />
+
+	<a href='{{url_for("main")}}'>Back</a>
+
+	<br />
 
 	</div>
 

@@ -19,7 +19,7 @@ from build_db import Items, Categories, Users, Base
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///catalog.db?check_same_thread=False')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind = engine)
@@ -31,7 +31,7 @@ session = DBSession()
 def main():
 	cat = session.query(Categories).all()
 	print("Welcome to the main page!")
-	return render_template('main.html', Categories = cat)
+	return render_template('main.html', categories = cat)
 
 """ Items Page / Displays items once the user clicks on a category """
 @app.route('/categories/<int:categories_id>/', methods = ['GET','POST'])
