@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Remove: {{categories.name}}</title>
+</head>
+<body>
+	<h1>Are you sure you want to remove: {{categories.name}}?</h1>
+	<br /><br />
+	<a href='{{url_for("remove", categories_id = categories.id)}}'>Yes</a>
+	<a href='{{url_for("main")}}'>No</a>
+</body>
+</html>
