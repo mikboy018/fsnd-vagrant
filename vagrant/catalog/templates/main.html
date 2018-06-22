@@ -15,11 +15,26 @@
 			<a href='{{url_for("show_items", categories = categories, items = null, categories_id = c.id)}}'>
 			<h3>{{c.name}}</h3>
 			</a>
-	
+			<a href='{{url_for("remove_category", categories_id=c.id)}}'>Remove Category</a>
+
 			<br /><br />
 	
 			
 		{% endfor %}
+
+	</div>
+
+	<div class="foot">
+
+		<h1> Footer </h1>	
+		
+		<br />
+
+		<a href='{{url_for("new_category")}}'>Add Category</a>
+
+		<br />
+
+
 
 	</div>
 

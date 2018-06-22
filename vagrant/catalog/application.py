@@ -57,13 +57,39 @@ def remove_item():
 @app.route('/categories/new/',  methods = ['GET', 'POST'])
 def new_category():
 	print("Unders construction... admin will be able to add category from here")
-	return "New Category"
+	return render_template('new_cat.html')
+
+@app.route('/categories/new/confirmed/', methods = ['GET', 'POST'])
+def new_cat():
+	if request.method == 'POST':
+		
+		cat_name = request.form['category_name']
+		print("adding: " + cat_name + " to categories")
+		user = session.query(Users).one()
+		category = Categories(name = cat_name, owner = user)
+
+		session.add(category)
+		session.commit()
+		cat = session.query(Categories).all()
+		return render_template('main.html', categories = cat)
+	else:
+		return render_template('new_cat.html')
 
 """ Remove categoryies / Admin only """
 @app.route('/categories/remove/<int:categories_id>/',  methods = ['GET', 'POST'])
-def remove_category():
+def remove_category(categories_id):
 	print("Under construction... admin will be able to remove category from here")
-	return "Remove Category"
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	return render_template('remove.html', categories = cat)
+
+@app.route('/categories/remove/<int:categories_id>/confirmed/', methods = ['GET','POST'])
+def remove(categories_id):
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	print("removing - " + cat.name)
+	session.delete(cat)
+	session.commit()
+	cat_list = session.query(Categories).all()
+	return render_template('main.html', categories = cat_list)
 
 if __name__ == '__main__':
 	app.debug = True

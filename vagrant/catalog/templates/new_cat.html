@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
+	<title>New Category</title>
+</head>
+<body>
+	<h1> Add a new category? </h1>
+
+	<br /><br />
+	<form method = post>
+		<p> What is the category name? </p><br />
+		<input type="text" name="category_name" placeholder="Enter Name...">
+		<button formaction="/categories/new/confirmed/">Add New Category</button>
+	</form>
+</body>
+</html>
