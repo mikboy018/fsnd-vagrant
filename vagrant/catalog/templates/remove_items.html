@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{url_for('static', filename='style.css')}}">
+	<title>Remove {{item.name}} from {{categories.name}}</title>
+</head>
+<body>
+	<h1>Are you sure you want to remove: {{item.name}}?</h1>
+	<br /><br />
+	<a href='{{url_for("remove_itm", categories_id = categories.id, items_id = item.id)}}'>Yes</a>
+	<a href='{{url_for("main")}}'>No</a>
+</body>
+</html>

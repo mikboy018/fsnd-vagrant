@@ -43,15 +43,50 @@ def show_items(categories_id):
 
 """ New Items Page / allows user to add new item, or go back to categories/id page """
 @app.route('/categories/<int:categories_id>/new/', methods = ['GET', 'POST'])
-def new_items():
+def new_items(categories_id):
 	print("Under construction... this will allow a new item to be made")
-	return "New Item"
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	return render_template('new_cat_item.html', category = cat)
+
+@app.route('/categories/<int:categories_id>/new/confirmed/', methods = ['GET', 'POST'])
+def new_itm(categories_id):
+	if request.method == 'POST':
+		cat = session.query(Categories).filter_by(id = categories_id).one()
+		user = session.query(Users).one()
+		item_name = request.form['item_name']
+		item_desc = request.form['item_desc']
+		print("adding " + item_name + " to " + cat.name)
+		new_item = Items(name = item_name, description = item_desc, owners = user, category = cat)
+
+		session.add(new_item)
+		session.commit()
+		cat = session.query(Categories).all()
+		return render_template('main.html', categories = cat)
+	else:
+		Print("Something else happened... returning to main page")
+		return render_template('main.html', categories = cat)
 
 """ Remove items page / allows user to confirm removing item, if they are the owner """
 @app.route('/categories/<int:categories_id>/remove/<int:items_id>/',  methods = ['GET', 'POST'])
-def remove_item():
+def remove_item(categories_id, items_id):
 	print("Under construction... this will allow the owner of an item to remove an item")
-	return "Remove Item"
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	itm = session.query(Items).filter_by(id = items_id).one()
+	return render_template('remove_items.html', categories = cat, item = itm)
+
+@app.route('/categories/<int:categories_id>/remove/<int:items_id>/confirm/',  methods = ['GET', 'POST'])
+def remove_itm(categories_id, items_id):
+
+	cat = session.query(Categories).filter_by(id = categories_id).one()
+	itm = session.query(Items).filter_by(id = items_id).one()
+	print("removing " + itm.name + " from " + cat.name)
+	
+	session.delete(itm)
+	session.commit()
+	
+	cat = session.query(Categories).all()
+	return render_template('main.html', categories = cat)
+	
 
 """ Add new categories / Admin only """
 @app.route('/categories/new/',  methods = ['GET', 'POST'])

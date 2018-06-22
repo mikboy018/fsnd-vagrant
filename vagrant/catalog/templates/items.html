@@ -17,6 +17,8 @@
 			<h3>{{i.name}}</h3>
 	
 			{{i.description}}
+
+			<a href='{{url_for("remove_item", categories_id = categories.id, items_id = i.id)}}'>Remove</a>
 	
 			<br /><br />
 
@@ -29,6 +31,8 @@
 	<h1> Footer </h1>	
 
 	<br />
+
+	<a href='{{url_for("new_items", categories_id = categories.id)}}'>Add New Item</a>
 
 	<a href='{{url_for("main")}}'>Back</a>
 
