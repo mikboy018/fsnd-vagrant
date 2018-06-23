@@ -15,8 +15,9 @@
 			<a href='{{url_for("show_items", categories = categories, items = null, categories_id = c.id)}}'>
 			<h3>{{c.name}}</h3>
 			</a>
+			{% if is_admin == true %}
 			<a href='{{url_for("remove_category", categories_id=c.id)}}'>Remove Category</a>
-
+			{% endif %}
 			<br /><br />
 	
 			

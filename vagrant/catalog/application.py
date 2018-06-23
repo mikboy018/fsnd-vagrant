@@ -42,7 +42,12 @@ session = DBSession()
 def main():
 	cat = session.query(Categories).all()
 	print("Welcome to the main page!")
-	return render_template('main.html', categories = cat)
+	if 'email' not in login_session:
+		user_id = "no value"
+	else:
+		user_id = getUserID(login_session['email'])
+	is_admin = getUserAdminAccess(user_id)
+	return render_template('main.html', categories = cat, is_admin = is_admin)
 
 """ Items Page / Displays items once the user clicks on a category """
 @app.route('/categories/<int:categories_id>/', methods = ['GET','POST'])
@@ -50,7 +55,12 @@ def show_items(categories_id):
 	print("Under construction... this will show items by category")
 	cat = session.query(Categories).filter_by(id = categories_id).one()
 	item = session.query(Items).filter_by(category_id = categories_id).all()
-	return render_template('items.html', categories = cat, items = item)
+	if 'email' not in login_session:
+		user_id = "no value"
+	else:
+		user_id = getUserID(login_session['email'])
+	is_admin = getUserAdminAccess(user_id)
+	return render_template('items.html', categories = cat, items = item, user_id = user_id, is_admin = is_admin)
 
 """ New Items Page / allows user to add new item, or go back to categories/id page """
 @app.route('/categories/<int:categories_id>/new/', methods = ['GET', 'POST'])
@@ -229,7 +239,7 @@ def gconnect():
 
 def createUser(login_session):
     newUser = Users(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'], admin = True)
+                   'email'], picture=login_session['picture'], admin = False)
     
     session.add(newUser)
     session.commit()
@@ -248,6 +258,17 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+def getUserAdminAccess(userid):
+	try:
+		user = session.query(Users).filter_by(id = userid).one()
+		if user.admin == True:
+			return True
+		else: 
+			return False
+	except:
+		print("No user found")
+		return False
 
 if __name__ == '__main__':
 	app.secret_key = 'in8_Zp8k5yLKpA-LUFJ0unNi'
