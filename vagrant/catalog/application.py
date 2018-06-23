@@ -8,14 +8,25 @@ Uses applicationdb.py for Create/Read/Update/Delete functions.
 
 """
 
-from flask import Flask, flash, request, redirect, url_for, render_template, jsonify
+from flask import Flask, flash, request, redirect, url_for, render_template, jsonify, make_response
+from flask import session as login_session
 
 from applicationdb import (show_categories, add_categories, remove_categories, show_items, add_items, remove_items)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import random, string, requests
+
+from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+
+import httplib2
+
+import json
+
 from build_db import Items, Categories, Users, Base
+
+CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 
 app = Flask(__name__)
 
@@ -126,6 +137,119 @@ def remove(categories_id):
 	cat_list = session.query(Categories).all()
 	return render_template('main.html', categories = cat_list)
 
+# State token creation - taken from in-class examples
+@app.route('/login/')
+def show_login():
+	state = ''.join(random.choice(string.ascii_uppercase + string.digits) 
+					for x in xrange(32))
+	login_session['state'] = state
+	#return "session: %s" % login_session['state']
+	return render_template('login.html', STATE = state)
+
+# Google Connect
+@app.route('/gconnect', methods = ['POST'])
+def gconnect():
+	if request.args.get('state') != login_session['state']:
+		response = make_response(json.dumps('Invalid state'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	code = request.data
+
+	try:
+		oauth_flow = flow_from_clientsecrets('client_secrets.json', scope = '')
+		oauth_flow.redirect_uri = 'postmessage'
+		credentials = oauth_flow.step2_exchange(code)
+	except FlowExchangeError:
+		response = make_response(json.dumps('Failed to upgrade auth code'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	
+	# access token check
+	access_token = credentials.access_token
+	url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)
+	h = httplib2.Http()
+	result = json.loads(h.request(url, 'GET')[1])
+	if result.get('error') is not None:
+		response = make_response(json.dumps(result.get('error')), 500)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	
+	# verify token is for intended user
+	gplus_id = credentials.id_token['sub']
+	if result['user_id'] != gplus_id:
+		response = make_response(json.dumps('Token id mismatch'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	
+	# Verify token client id
+	if result['issued_to'] != CLIENT_ID:
+		response = make_response(json.dumps('Token Client ID mismatch'), 401)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	
+	# Check if user already logged in
+	stored_access_token = login_session.get('credentials')
+	stored_gplus_id = login_session.get('gplus_id')
+	if stored_access_token is not None and gplus_id == stored_gplus_id:
+		reponse = make_response(json.dumps('Already logged on'), 200)
+		response.headers['Content-Type'] = 'application/json'
+		return response
+	
+	# Store access token in session for later use
+	login_session['access_token'] = credentials.access_token
+	login_session['gplus_id'] = gplus_id
+	
+	# Get user info
+	user_info_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+	params = {'access_token': credentials.access_token, 'alt': 'json'}
+	answer = requests.get(user_info_url, params = params)
+	
+	data = answer.json()
+	
+	login_session['username'] = data['name']
+	login_session['picture'] = data['picture']
+	login_session['email'] = data['email']
+	
+	# add provider
+	login_session['provider'] = 'google'
+
+	# check if user exists / prompt account creation
+	user_id = getUserID(data["email"])
+	if not user_id:
+		user_id = createUser(login_session)
+	login_session['user_id'] = user_id
+
+	output = ''
+	output += '<h1> Hi,' + login_session['username'] + '</h1>'
+	output += '<img src="' + login_session['picture']
+	output += '" style = " width: 300px; height: 300px;>'
+	flash("You are logged in as: %s" % login_session['username'])
+
+	return output
+
+def createUser(login_session):
+    newUser = Users(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'], admin = True)
+    
+    session.add(newUser)
+    session.commit()
+    user = session.query(Users).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(Users).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(Users).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
 if __name__ == '__main__':
+	app.secret_key = 'in8_Zp8k5yLKpA-LUFJ0unNi'
 	app.debug = True
 	app.run(host='0.0.0.0', port=5000)

@@ -12,7 +12,7 @@ DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
 # Create Admin User
-user1 = Users(name = "Mike B.", email = "boyer.mike.e@gmail.com", admin = True)
+user1 = Users(name = "Mike B.", email = "boyer.mike.e@gmail.com", picture = "", admin = True)
 
 session.add(user1)
 session.commit()

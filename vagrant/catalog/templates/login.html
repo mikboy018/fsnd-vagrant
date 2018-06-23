@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  </script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+  </script>
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: "413696903901-a53rn4h6u22k00ptj4ns75pmjbke4b2f.apps.googleusercontent.com",
+          // Scopes to request in addition to 'profile' and 'email'
+          //scope: 'additional_scope'
+        });
+      });
+    }
+  </script>
+	<title>Login</title>
+</head>
+<body>
+	<div >
+		<button id="signinButton">Sign in with Google</button>
+		<script>
+  			$('#signinButton').click(function() {
+    		// signInCallback defined in step 6.
+    		auth2.grantOfflineAccess().then(signInCallback);
+  		});
+</script>
+		<span class = "g-signin"
+			data-scope = "openid email"
+			data-clientid = "413696903901-a53rn4h6u22k00ptj4ns75pmjbke4b2f.apps.googleusercontent.com"
+			data-redirecturi = "postmessage"
+			data-accesstype = "offline"
+			data-cookiepolicy = "single_host_origin"
+			data-callback = "signInCallback"
+			data-approvalpromt = "force">
+			<!--
+				data-redirecturi = "postmessage" allows for use of one-time use code
+				data-accesstype = "offline" allows server to make request to google api server w/o client being logged in
+				data-cookiepolicy = "single_host_orgin" determines scope of uris that can access cookie -- in this case, only the single host name
+				data-callback = "signInCallback" sends one-time use code with access token
+				data-approvalprompt = "force" forces user to log in each time / disable for production
+			-->
+		</span>
+	</div>
+	<div id="result"></div>
+
+
+	<script> function signInCallback(authResult){
+		if(authResult['code']){
+			//hide sign-in button
+			$('#signinButton').attr('style','display: none');
+			//send one-time-use code to server, if server responds, write 'login successful' message
+			//and redirect to main page
+			$.ajax({
+				type: 'POST',
+				url: '/gconnect?state={{STATE}}',
+				processData: false,
+				contentType: 'application/octect-stream; charset=utf-8',
+				data: authResult['code'],
+				success: function(result){
+					if(result){
+						$('#result').html('Login Successful </br>' +  result + '</br>Redirecting..')
+						setTimeout(function(){
+							window.location.href="/categories";
+						}, 4000);
+					} else {
+						$('#result').html('Failed to make server-side call.');
+					}
+				}
+			})
+		}
+	}
+	</script>
+</body>
+</html>
