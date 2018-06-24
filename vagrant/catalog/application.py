@@ -44,10 +44,12 @@ def main():
 	print("Welcome to the main page!")
 	if 'email' not in login_session:
 		user_id = "no value"
+		client_logged_in = False
 	else:
 		user_id = getUserID(login_session['email'])
+		client_logged_in = True
 	is_admin = getUserAdminAccess(user_id)
-	return render_template('main.html', categories = cat, is_admin = is_admin)
+	return render_template('main.html', categories = cat, is_admin = is_admin, client_logged_in = client_logged_in)
 
 """ Items Page / Displays items once the user clicks on a category """
 @app.route('/categories/<int:categories_id>/', methods = ['GET','POST'])
@@ -57,10 +59,12 @@ def show_items(categories_id):
 	item = session.query(Items).filter_by(category_id = categories_id).all()
 	if 'email' not in login_session:
 		user_id = "no value"
+		client_logged_in = False
 	else:
 		user_id = getUserID(login_session['email'])
+		client_logged_in = True
 	is_admin = getUserAdminAccess(user_id)
-	return render_template('items.html', categories = cat, items = item, user_id = user_id, is_admin = is_admin)
+	return render_template('items.html', categories = cat, items = item, user_id = user_id, is_admin = is_admin, client_logged_in = client_logged_in)
 
 """ New Items Page / allows user to add new item, or go back to categories/id page """
 @app.route('/categories/<int:categories_id>/new/', methods = ['GET', 'POST'])
@@ -73,7 +77,7 @@ def new_items(categories_id):
 def new_itm(categories_id):
 	if request.method == 'POST':
 		cat = session.query(Categories).filter_by(id = categories_id).one()
-		user = session.query(Users).one()
+		user = session.query(Users).filter_by(id = getUserID(login_session['email'])).one()
 		item_name = request.form['item_name']
 		item_desc = request.form['item_desc']
 		print("adding " + item_name + " to " + cat.name)

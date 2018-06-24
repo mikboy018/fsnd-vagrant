@@ -32,11 +32,25 @@
 
 	<div class="foot">
 
-	<h1> Footer </h1>	
+	<h1> Footer </h1>
+
+	{% if client_logged_in == False %}
+
+	<a href='{{url_for("show_login")}}'>Log In</a>	
+		
+	{% else %}
+
+	<a href='{{url_for("sign_out")}}'>Log Out</a>
 
 	<br />
 
 	<a href='{{url_for("new_items", categories_id = categories.id)}}'>Add New Item</a>
+
+	<br />
+
+	{% endif %}
+
+	<br />
 
 	<a href='{{url_for("main")}}'>Back</a>
 
