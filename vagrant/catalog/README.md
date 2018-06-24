@@ -13,6 +13,8 @@ Background:
 
 The goal of this assignment is to develop an application that provides a list of items within various categories as well as provide a user registration/authentication system. Registered users will be able to post, edit, and delete items.
 
+Uses 'Bangers' Font from google - https://fonts.google.com/specimen/Bangers
+
 
 Tables / Structure:
 
