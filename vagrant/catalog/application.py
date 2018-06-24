@@ -230,12 +230,31 @@ def gconnect():
 	login_session['user_id'] = user_id
 
 	output = ''
-	output += '<h1> Hi,' + login_session['username'] + '</h1>'
-	output += '<img src="' + login_session['picture']
-	output += '" style = " width: 300px; height: 300px;>'
+	output += '<h1> Hi, ' + login_session['username'] + '</h1>'
+	output += '<img src="' + login_session['picture'] + 'style =  "width: 300px; height: 300px;">'
 	flash("You are logged in as: %s" % login_session['username'])
 
 	return output
+
+@app.route('/logoff/')
+def sign_out():
+
+	access_token = login_session.get('access_token')
+
+	url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+	h = httplib2.Http()
+	result = h.request(url, 'GET')[0]
+
+	login_session.clear()
+
+
+	output = ''
+	output += ' <h3> Signing Out, Please Wait </h3>'
+	output += '<script>setTimeout(function(){'
+	output += 'window.location.href="/categories";'
+	output += '}, 4000);</script>'
+	return output
+
 
 def createUser(login_session):
     newUser = Users(name=login_session['username'], email=login_session[
