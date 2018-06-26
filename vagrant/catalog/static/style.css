@@ -1,22 +1,135 @@
-body {
-	background-color: #ceeae0;
+body{
 	font-family: 'Bangers', cursive;
-}
-
-h1, .list {
-	display: block;
 	text-align: center;
-	margin-top: 10px;
-	margin-left: 20%;
-	margin-right: 20%;
+	background-color: #336699;
 }
 
-button { 
-	margin: 10px;
+.title{
+	width: 100%;
+	text-align: center;
 }
 
-.itemlist {
+.container{
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 700px;
+	min-height: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	margin-bottom: 5%;
 	background-color: white;
-	border: 2px solid blue;
-	border-radius: 10px;
+	opacity: 1;
+	border: 6px solid black;
+	border-radius: 5px;
+}
+
+.header{
+	display: flex;
+	justify-content: space-between;
+	text-align: right;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.left{
+	padding-top: 15px;
+	padding-left: 15px;
+	text-align:  left;
+}
+
+.right{
+	padding-top: 15px;
+	padding-right: 15px;
+	text-align: right;
+}
+
+.header{
+	width: 100%;
+}
+
+.list{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	margin-top: 15%;
+	margin-bottom: 25%;
+}
+
+.featured{
+	width: 100%;
+	text-align: center;
+}
+
+/**http://enjoycss.com/start#border helped me to design the border**/
+.box{
+
+	border: 6px solid #e3e8ef;
+	border-radius: 5px;
+}
+
+.projectTitle{
+	font-weight: bold;
+	text-align: center;
+	color: black;
+}
+
+@media screen and (max-width: 420px){
+	.container, .left, .right, .box, .list{
+		width: 100%;
+		font-size: 10px;
+		align-items: center;
+	}
+
+	.left, .right{
+		text-align: center;
+		padding: 0;
+	}
+
+	.box{
+		margin-top: 1%;
+		margin-bottom: 1%;
+	}
+
+	.header{
+		display: block;
+		align-self: center;
+	}
+}
+
+@media screen and (min-width: 421px) and (max-width: 669px){
+	.box, .left, .right{
+		width: 46%;
+		font-size: 12px;
+	}
+
+
+	.box{
+		margin: .5%;
+	}
+
+	.box:nth-child(3n){
+		width: 95.5%;
+	}
+
+	.list{
+		width: 100%;
+	}
+
+}
+
+
+@media screen and (min-width: 670px){
+	.list{
+		width: 100%;
+	}
+
+	.box, .left, .right{
+		width: 30.5%;
+	}
+
+	.box{
+		margin: .5%;
+	}
+
 }

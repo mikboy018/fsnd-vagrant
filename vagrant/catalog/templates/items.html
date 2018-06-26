@@ -7,56 +7,79 @@
 </head>
 <body>
 
-	<h1>{{categories.name}}</h1>
+	<div class="container">
 
-	<br />
+		<div class="header">
 
-	<div class="list">
-	
-		{% for i in items %}
-			
-			<h3>{{i.name}}</h3>
-	
-			{{i.description}}
+			<div class="left">
 
-			{% if is_admin == True or i.owner_id == user_id %}
+				<p>Catalog</p>
 
-			<a href='{{url_for("remove_item", categories_id = categories.id, items_id = i.id)}}'>Remove</a>
+			</div>
 
-			{% endif %}
-	
-			<br /><br />
+			<div class="right">
 
-		{% endfor %}
+				{% if client_logged_in == False %}
 
-	</div>
-
-	<div class="foot">
-
-	<h1> Footer </h1>
-
-	{% if client_logged_in == False %}
-
-	<a href='{{url_for("show_login")}}'>Log In</a>	
+					<a href='{{url_for("show_login")}}'>Log In</a>	
 		
-	{% else %}
+				{% else %}
 
-	<a href='{{url_for("sign_out")}}'>Log Out</a>
+					<a href='{{url_for("sign_out")}}'>Log Out</a>
 
-	<br />
+					<br />
 
-	<a href='{{url_for("new_items", categories_id = categories.id)}}'>Add New Item</a>
+					<a href='{{url_for("new_items", categories_id = categories.id)}}'>Add New Item</a>
 
-	<br />
+					<br />
 
-	{% endif %}
+				{% endif %}
 
-	<br />
+				<br />
 
-	<a href='{{url_for("main")}}'>Back</a>
+				<a href='{{url_for("main")}}'>Back</a>
 
-	<br />
+				<br />
 
+			</div>
+
+		</div>
+
+		<div class="title">
+
+			<h1>{{categories.name}}</h1>
+
+		</div>
+
+		<br />
+
+		<div class="list">
+	
+			{% for i in items %}
+
+			<div class="box">
+			
+				<p>{{i.name}}</p> 
+
+				<br />
+	
+				<p>{{i.description}}</p>
+
+				{% if is_admin == True or i.owner_id == user_id %}
+
+					<br />
+
+					<a href='{{url_for("remove_item", categories_id = categories.id, items_id = i.id)}}'>Remove</a>
+
+				{% endif %}
+	
+				<br /><br />
+
+			</div>
+
+			{% endfor %}
+
+		</div>
 	</div>
 
 </body>

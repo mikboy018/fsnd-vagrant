@@ -6,29 +6,18 @@
 	<title>Categories</title>
 </head>
 <body>
-	<h1> Categories </h1>
 
-	<br /><br />
+<div class="container">
 
-	<div class="list">
-	
-		{% for c in categories %}
-			<a href='{{url_for("show_items", categories = categories, items = null, categories_id = c.id)}}'>
-			<h3>{{c.name}}</h3>
-			</a>
-			{% if is_admin == true %}
-			<a href='{{url_for("remove_category", categories_id=c.id)}}'>Remove Category</a>
-			{% endif %}
-			<br /><br />
-	
-			
-		{% endfor %}
+	<div class="header">
 
-	</div>
+		<div class="left">
 
-	<div class="foot">
+			<p>Catalog</p>
 
-		<h1> Footer </h1>
+		</div>
+
+		<div class="right">
 
 		{% if client_logged_in == False %}
 
@@ -50,9 +39,40 @@
 
 		<br />
 
+		</div>
+		
+	</div>
 
+
+	<div class="title">
+
+		<h1> Categories </h1>
 
 	</div>
+
+	<br />
+
+	<div class="list">
+	
+		{% for c in categories %}
+		<div class="box">
+			<a href='{{url_for("show_items", categories = categories, items = null, categories_id = c.id)}}'>
+			<h3>{{c.name}}</h3>
+			</a>
+			{% if is_admin == true %}
+			<a href='{{url_for("remove_category", categories_id=c.id)}}'>Remove Category</a>
+			{% endif %}
+			<br /><br />
+		</div>
+	
+			
+		{% endfor %}
+
+	</div>
+
+
+
+</div>
 
 
 </body>
