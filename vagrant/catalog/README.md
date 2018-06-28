@@ -6,7 +6,7 @@ By: Mike Boyer
 Boyer.Mike.E@gmail.com
 http://mikboy018.github.io / https://github.com/mikboy018
 
-18 Jun 2018
+27 Jun 2018
 
 
 Background:
@@ -15,9 +15,18 @@ The goal of this assignment is to develop an application that provides a list of
 
 Uses 'Bangers' Font from google - https://fonts.google.com/specimen/Bangers
 
+Instructions:
+
+In order to run, complete the following steps:
+1. 
+2.
+3.
+4.
+5.
+6.
+
 
 Tables / Structure:
-
 
 Table layout is as follows.
 
@@ -31,19 +40,20 @@ Table layout is as follows.
 Consists of:
 
 	i. id (primary key)
-	ii. Category (foreign key)
-	iii. Name (text)
-	iv. Description (text)
-	v. Owner (foreign key)
+	ii. name (text)
+	iii. description (text)
+	iv. category_id (foreign key with categories table)
+	v. owner_id (foreign key with users table)
 
 2. Users
 
 Consists of:
 
 	i. id (primary key)
-	ii. Name (text)
-	iii. Login Email (text)
-	iv. Admin (boolean)
+	ii. name (text)
+	iii. email (text)
+	iv. picture (text)
+	iv. admin (boolean)
 
 
 3. Categories
@@ -51,15 +61,15 @@ Consists of:
 Consists of:
 
 	i. id (primary key)
-	ii. Name (text)
-	iii. Owner (foreign key), will be the admin
+	ii. name (text)
+	iii. owner_id (foreign key)
 
 
 Authentication / Registration:
 
-This app will use authentication via Google plus. One person (my account), will be designated admin.
+This app will use authentication via Google plus. One person (my account), will be designated admin. If you would like to change the admin, enter the desired credentials in populated_db.py, with admin = True.
 
-Registration will occur separate from signing in. If there is no account, the user will see a register and login buttons in the navigation bar. Without registering (or logging in with a registered account), they will be a guest.
+Registration will occur automatically if a new user tries to log in. If there is no account, the user will see a login button in the header. Without logging in, they will be a guest, and have no permissions (outside of read functions).
 
 
 

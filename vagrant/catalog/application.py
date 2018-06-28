@@ -4,7 +4,8 @@
 
 Web Application for the Catalog Project
 
-Uses applicationdb.py for Create/Read/Update/Delete functions.
+Ensure you have run build_db.py and populate_db.py before running
+
 
 """
 
@@ -46,6 +47,8 @@ session = DBSession()
 def main():
     cat = session.query(Categories).all()
     print("Welcome to the main page!")
+
+    # determine user privileges
     if 'email' not in login_session:
         user_id = "no value"
         client_logged_in = False
@@ -53,6 +56,8 @@ def main():
         user_id = getUserID(login_session['email'])
         client_logged_in = True
     is_admin = getUserAdminAccess(user_id)
+
+    # render html based on user access
     return render_template(
         'main.html', categories=cat, is_admin=is_admin,
         client_logged_in=client_logged_in
@@ -64,9 +69,11 @@ def main():
 
 @app.route('/categories/<int:categories_id>/', methods=['GET', 'POST'])
 def show_items(categories_id):
-    print("Under construction... this will show items by category")
+    print("This will show items by category")
     cat = session.query(Categories).filter_by(id=categories_id).one()
     item = session.query(Items).filter_by(category_id=categories_id).all()
+
+    # determine user privileges
     if 'email' not in login_session:
         user_id = "no value"
         client_logged_in = False
@@ -74,6 +81,8 @@ def show_items(categories_id):
         user_id = getUserID(login_session['email'])
         client_logged_in = True
     is_admin = getUserAdminAccess(user_id)
+
+    # render html based on user access
     return render_template(
         'items.html', categories=cat, items=item,
         user_id=user_id, is_admin=is_admin,
@@ -86,15 +95,17 @@ def show_items(categories_id):
 
 @app.route('/categories/<int:categories_id>/new/', methods=['GET', 'POST'])
 def new_items(categories_id):
-    print("Under construction... this will allow a new item to be made")
+    print("This will allow a new item to be made")
     cat = session.query(Categories).filter_by(id=categories_id).one()
     return render_template('new_cat_item.html', category=cat)
 
 
-@app.route('/categories/<int:categories_id>/new/confirmed/',
+@app.route('/categories/<int:categories_id>/new/entry/',
            methods=['GET', 'POST'])
 def new_itm(categories_id):
     if request.method == 'POST':
+
+        # Create item
         cat = session.query(Categories).filter_by(id=categories_id).one()
         user = session.query(Users).filter_by(id=getUserID(
             login_session['email']
@@ -107,6 +118,7 @@ def new_itm(categories_id):
             owners=user, category=cat
         )
 
+        # Add item to DB
         session.add(new_item)
         session.commit()
         cat = session.query(Categories).all()
@@ -122,7 +134,7 @@ def new_itm(categories_id):
 @app.route('/categories/<int:categories_id>/remove/<int:items_id>/',
            methods=['GET', 'POST'])
 def remove_item(categories_id, items_id):
-    print("Under construction... this will allow the owner to remove an item")
+    print("This will allow the owner to remove an item")
     cat = session.query(Categories).filter_by(id=categories_id).one()
     itm = session.query(Items).filter_by(id=items_id).one()
     return render_template('remove_items.html', categories=cat, item=itm)
@@ -132,10 +144,12 @@ def remove_item(categories_id, items_id):
            methods=['GET', 'POST'])
 def remove_itm(categories_id, items_id):
 
+    # Identify item for removal
     cat = session.query(Categories).filter_by(id=categories_id).one()
     itm = session.query(Items).filter_by(id=items_id).one()
     print("removing " + itm.name + " from " + cat.name)
 
+    # remove item from DB
     session.delete(itm)
     session.commit()
 
@@ -152,16 +166,19 @@ def new_category():
     return render_template('new_cat.html')
 
 
-@app.route('/categories/new/confirmed/', methods=['GET', 'POST'])
+@app.route('/categories/new/entry/', methods=['GET', 'POST'])
 def new_cat():
     if request.method == 'POST':
 
+        # Create new category
         user_id = getUserID(login_session['email'])
         cat_name = request.form['category_name']
         print("adding: " + cat_name + " to categories")
-        user = session.query(Users).filter_by(id=user_id)
+        user = session.query(Users).filter_by(id=user_id).one()
+        print("owner: " + user.name)
         category = Categories(name=cat_name, owner=user)
 
+        # Add category to DB
         session.add(category)
         session.commit()
         cat = session.query(Categories).all()
@@ -183,12 +200,17 @@ def remove_category(categories_id):
 @app.route('/categories/remove/<int:categories_id>/confirmed/',
            methods=['GET', 'POST'])
 def remove(categories_id):
+
+    # Identify Category
     cat = session.query(Categories).filter_by(id=categories_id).one()
     print("removing - " + cat.name)
+
+    # Remove Category from DB
     session.delete(cat)
     session.commit()
     cat_list = session.query(Categories).all()
     return render_template('main.html', categories=cat_list)
+
 
 # State token creation - taken from in-class examples
 
@@ -200,6 +222,7 @@ def show_login():
     login_session['state'] = state
     # return "session: %s" % login_session['state']
     return render_template('login.html', STATE=state)
+
 
 # Google Connect
 
@@ -306,10 +329,12 @@ def sign_out():
     return output
 
 
+""" Helper functions: Create User, Get User Info/User ID/User Access Rights"""
+
+
 def createUser(login_session):
     newUser = Users(name=login_session['username'], email=login_session[
         'email'], picture=login_session['picture'], admin=False)
-
     session.add(newUser)
     session.commit()
     user = session.query(Users).filter_by(email=login_session['email']).one()
@@ -340,18 +365,18 @@ def getUserAdminAccess(user_id):
         print("No user found")
         return False
 
-# JSON Endpoints
+
+""" JSON Endpoints """
+
+
 # List all items in a category
-
-
 @app.route('/categories/<int:categories_id>/JSON/')
 def itemInCategoryJSON(categories_id):
     items = session.query(Items).filter_by(category_id=categories_id).all()
     return jsonify(items=[i.serialize for i in items])
 
+
 # List a specific item
-
-
 @app.route('/categories/<int:categories_id>/items/<int:items_id>/JSON/')
 def itemJSON(categories_id, items_id):
     categories = session.query(Categories).filter_by(id=categories_id).one()
@@ -359,9 +384,8 @@ def itemJSON(categories_id, items_id):
         id=items_id, category_id=categories.id).one()
     return jsonify(items=[items.serialize])
 
+
 # List all categories
-
-
 @app.route('/categories/JSON/')
 def categoryJSON():
     categories = session.query(Categories).all()
