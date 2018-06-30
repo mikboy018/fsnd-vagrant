@@ -15,6 +15,8 @@
 
 				<p>Catalog</p>
 
+				<a href='{{url_for("itemInCategoryJSON", categories_id=categories.id)}}'>View Category JSON</a>
+
 			</div>
 
 			<div class="right">
@@ -72,6 +74,10 @@
 					<a href='{{url_for("remove_item", categories_id = categories.id, items_id = i.id)}}'>Remove</a>
 
 				{% endif %}
+
+				<br> 
+
+				<a href='{{url_for("itemJSON", categories_id = categories.id, items_id = i.id)}}'>View Item JSON</a>
 	
 				<br /><br />
 
