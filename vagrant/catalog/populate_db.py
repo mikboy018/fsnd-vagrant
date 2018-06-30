@@ -3,6 +3,14 @@ from sqlalchemy.orm import sessionmaker
 
 from build_db import Users, Items, Categories, Base
 
+""" Retrieves User Name, and Email to create
+	Admin Account
+"""
+print("Welcome, you will be admin.")
+print("Please provide name and email")
+user_email = raw_input("Email: ")
+user_name = raw_input("Name: ")
+
 """
     Creates entries for Database file.
 """
@@ -17,8 +25,8 @@ session = DBSession()
 
 # Create Admin User
 user1 = Users(
-              name="Mike B.",
-              email="boyer.mike.e@gmail.com",
+              name=user_name,
+              email=user_email,
               picture="",
               admin=True
               )
